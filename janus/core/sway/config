@@ -1,0 +1,17 @@
+# Janus Sway base config — sources theme via ~/.config/janus/modes/active
+# This file is symlinked to ~/.config/sway/config
+
+# Load environment first
+include ~/.config/janus/core/sway/env.conf
+
+# Mod key
+set $mod Mod4
+
+# Keybindings
+include ~/.config/janus/core/sway/keybinds.conf
+
+# Theme-specific tweaks (colors, gaps, background)
+include ~/.config/janus/modes/active/sway.conf
+
+# Autostart after theme so it can pick up mode assets
+include ~/.config/janus/core/sway/autostart.conf

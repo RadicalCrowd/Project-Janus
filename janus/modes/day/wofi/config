@@ -1,0 +1,8 @@
+show=drun
+allow_images=true
+prompt=Run:
+insensitive=true
+matching=fuzzy
+no_actions=true
+hide_scroll=true
+term=footclient

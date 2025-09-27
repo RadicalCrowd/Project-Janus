@@ -1,0 +1,55 @@
+/* Night Mode — Matrix-inspired */
+@define-color bg #000000;
+@define-color fg #d7ffd7;
+@define-color acc #00ff95;
+@define-color dim #004d3a;
+
+* {
+  border: none;
+  font-family: JetBrains Mono, monospace;
+  font-size: 12.5pt;
+}
+
+window#waybar {
+  background: @bg;
+  color: @fg;
+  transition: none;
+}
+
+#workspaces button {
+  padding: 0.3rem 0.6rem;
+  color: @fg;
+  background: transparent;
+}
+
+#workspaces button.focused {
+  background: alpha(@acc, 0.20);
+  color: @fg;
+}
+
+#workspaces button.urgent {
+  background: #ff3b30;
+  color: @bg;
+}
+
+#clock, #cpu, #memory, #battery, #network, #window {
+  padding: 0.25rem 0.6rem;
+  margin: 0 2px;
+  color: @fg;
+}
+
+#battery.charging, #battery.plugged {
+  color: @acc;
+}
+
+#battery.critical {
+  color: #ff3b30;
+  font-weight: bold;
+}
+
+.modules-right > * + *,
+.modules-left > * + * {
+  border-left: 1px solid alpha(@fg, 0.18);
+  padding-left: 0.6rem;
+  margin-left: 0.6rem;
+}

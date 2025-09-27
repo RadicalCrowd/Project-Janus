@@ -1,0 +1,37 @@
+/* Wofi Day Mode — Gruvbox Light */
+window {
+  margin: 0px;
+  background-color: #f9f5d7;
+  color: #3c3836;
+  border: 2px solid #b57614;
+}
+
+#input {
+  margin: 8px;
+  border: 2px solid #b57614;
+  background-color: #fbf1c7;
+  color: #3c3836;
+  padding: 6px 8px;
+}
+
+#inner-box {
+  margin: 8px;
+}
+
+#outer-box {
+  margin: 4px;
+}
+
+#scroll {
+  margin: 0px;
+}
+
+#text {
+  padding: 6px;
+  color: #3c3836;
+}
+
+#entry:selected {
+  background-color: rgba(181, 118, 20, 0.18);
+  color: #3c3836;
+}

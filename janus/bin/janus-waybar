@@ -1,0 +1,10 @@
+#!/usr/bin/env zsh
+# Restart Waybar cleanly (used by Sway autostart and theme switch)
+set -euo pipefail
+emulate -L zsh
+setopt PIPE_FAIL ERR_EXIT NO_UNSET
+
+command -v pkill >/dev/null 2>&1 && pkill -x waybar >/dev/null 2>&1 || true
+if command -v waybar >/dev/null 2>&1; then
+  nohup waybar >/dev/null 2>&1 & disown
+fi

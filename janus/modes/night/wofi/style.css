@@ -1,0 +1,37 @@
+/* Wofi Night Mode — Matrix vibes */
+window {
+  margin: 0px;
+  background-color: #000000;
+  color: #d7ffd7;
+  border: 2px solid #00ff95;
+}
+
+#input {
+  margin: 8px;
+  border: 2px solid #00ff95;
+  background-color: #001a14;
+  color: #d7ffd7;
+  padding: 6px 8px;
+}
+
+#inner-box {
+  margin: 8px;
+}
+
+#outer-box {
+  margin: 4px;
+}
+
+#scroll {
+  margin: 0px;
+}
+
+#text {
+  padding: 6px;
+  color: #d7ffd7;
+}
+
+#entry:selected {
+  background-color: rgba(0, 255, 149, 0.18);
+  color: #d7ffd7;
+}

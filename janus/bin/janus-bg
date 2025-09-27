@@ -1,0 +1,21 @@
+#!/usr/bin/env zsh
+# Minimal wallpaper manager for Sway (color or image)
+set -euo pipefail
+emulate -L zsh
+setopt PIPE_FAIL ERR_EXIT NO_UNSET
+
+if ! command -v swaybg >/dev/null 2>&1; then
+  print -u2 "swaybg not found"
+  exit 1
+fi
+
+command -v pkill >/dev/null 2>&1 && pkill -x swaybg >/dev/null 2>&1 || true
+
+if [[ "${1:-}" == "-c" && -n "${2:-}" ]]; then
+  exec swaybg -c "$2"
+elif [[ -n "${1:-}" && -f "${1}" ]]; then
+  exec swaybg -i "$1" -m fill
+else
+  # default to black
+  exec swaybg -c '#000000'
+fi

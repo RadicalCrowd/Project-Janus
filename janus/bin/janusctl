@@ -1,0 +1,145 @@
+#!/usr/bin/env zsh
+# Janus control CLI (zsh 5.9+)
+set -euo pipefail
+emulate -L zsh
+setopt PIPE_FAIL ERR_EXIT NO_UNSET
+
+JANUS_DIR="${HOME}/.config/janus"
+MODES_DIR="${JANUS_DIR}/modes"
+ACTIVE_LINK="${MODES_DIR}/active"
+
+usage() {
+  cat <<'EOF'
+janusctl — manage Janus modes and status
+
+Usage:
+  janusctl mode toggle
+  janusctl mode (day|night|<name>)
+  janusctl status
+  janusctl doctor
+  janusctl help
+
+Notes:
+- Modes are folders under ~/.config/janus/modes/
+- Active mode is the symlink ~/.config/janus/modes/active
+EOF
+}
+
+sway_reload() {
+  if [[ -n "${SWAYSOCK:-}" ]] && command -v swaymsg >/dev/null 2>&1; then
+    swaymsg reload >/dev/null 2>&1 || true
+  fi
+}
+
+waybar_restart() {
+  # Fast and quiet restart
+  if command -v pkill >/dev/null 2>&1; then
+    pkill -x waybar >/dev/null 2>&1 || true
+  fi
+  if command -v waybar >/dev/null 2>&1; then
+    nohup waybar >/dev/null 2>&1 & disown || true
+  fi
+}
+
+current_mode() {
+  if [[ -L "$ACTIVE_LINK" ]]; then
+    local target="$(realpath "$ACTIVE_LINK")"
+    print "${target:t}" # folder name
+  else
+    print "none"
+  fi
+}
+
+set_mode() {
+  local mode="$1"
+  local target="${MODES_DIR}/${mode}"
+  if [[ ! -d "$target" ]]; then
+    print -u2 "Mode '${mode}' does not exist at ${target}"
+    exit 1
+  fi
+  ln -sfn "$target" "$ACTIVE_LINK"
+  print "Mode set to '${mode}'"
+  # Refresh session components
+  sway_reload
+  waybar_restart
+}
+
+toggle_mode() {
+  local cm="$(current_mode)"
+  local next=""
+  if [[ "$cm" == "day" ]]; then
+    next="night"
+  else
+    next="day"
+  fi
+  set_mode "$next"
+}
+
+status() {
+  print "Janus status"
+  print " - Janus dir:   ${JANUS_DIR}"
+  print " - Modes dir:   ${MODES_DIR}"
+  print " - Active link: ${ACTIVE_LINK}"
+  if [[ -L "$ACTIVE_LINK" ]]; then
+    print " - Active mode: $(current_mode)"
+  else
+    print " - Active mode: (none)"
+  fi
+}
+
+doctor() {
+  local ok=1
+  if [[ ! -d "$JANUS_DIR" ]]; then
+    print -u2 "Missing ${JANUS_DIR}"
+    ok=0
+  fi
+  if [[ ! -d "$MODES_DIR" ]]; then
+    print -u2 "Missing ${MODES_DIR}"
+    ok=0
+  fi
+  if [[ ! -L "$ACTIVE_LINK" ]]; then
+    print -u2 "Missing active symlink ${ACTIVE_LINK}"
+    ok=0
+  fi
+  if ! command -v zsh >/dev/null 2>&1; then
+    print -u2 "zsh not found"
+    ok=0
+  else
+    local need="5.9" have="${ZSH_VERSION:-0}"
+    local IFS=.; local -a a=(${have}) b=(${need})
+    local pass=1; for ((i=1; i<=${#b}; i++)); do if (( ${a[i]:-0} < ${b[i]} )); then pass=0; break; fi; done
+    (( pass )) || { print -u2 "zsh >= ${need} required, found ${have}"; ok=0; }
+  fi
+  print "Components:"
+  for c in sway waybar wofi foot swaybg; do
+    if command -v "$c" >/dev/null 2>&1; then
+      print " - $c: OK"
+    else
+      print " - $c: MISSING"
+      ok=0
+    fi
+  done
+  if (( ok )); then
+    print "Doctor: OK"
+    return 0
+  else
+    print -u2 "Doctor: issues detected"
+    return 1
+  fi
+}
+
+cmd="${1:-help}"
+case "$cmd" in
+  mode)
+    sub="${2:-}"
+    if [[ -z "$sub" ]]; then usage; exit 1; fi
+    case "$sub" in
+      toggle) toggle_mode ;;
+      *) set_mode "$sub" ;;
+    esac
+    ;;
+  status) status ;;
+  doctor) doctor ;;
+  help|--help|-h) usage ;;
+  *) usage; exit 1 ;;
+esac

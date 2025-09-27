@@ -1,0 +1,60 @@
+/* Day Mode — Gruvbox Light, high contrast */
+@define-color bg #f9f5d7;
+@define-color fg #3c3836;
+@define-color acc #b57614;
+@define-color muted #928374;
+
+* {
+  border: none;
+  font-family: Inter, Noto Sans, sans-serif;
+  font-size: 12.5pt;
+}
+
+window#waybar {
+  background: @bg;
+  color: @fg;
+  transition: none;
+}
+
+#workspaces button {
+  padding: 0.3rem 0.6rem;
+  color: @fg;
+  background: transparent;
+}
+
+#workspaces button.focused {
+  background: alpha(@acc, 0.18);
+  color: @fg;
+}
+
+#workspaces button.urgent {
+  background: #cc241d;
+  color: @bg;
+}
+
+#clock, #cpu, #memory, #battery, #network, #window {
+  padding: 0.25rem 0.6rem;
+  margin: 0 2px;
+  color: @fg;
+}
+
+#battery.charging, #battery.plugged {
+  color: @acc;
+}
+
+#battery.critical {
+  color: #cc241d;
+  font-weight: bold;
+}
+
+#window {
+  color: @fg;
+}
+
+/* Visual separators with adequate contrast */
+.modules-right > * + *,
+.modules-left > * + * {
+  border-left: 1px solid alpha(@fg, 0.25);
+  padding-left: 0.6rem;
+  margin-left: 0.6rem;
+}
